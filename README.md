@@ -28,4 +28,4 @@ multithreaded DB concept with data sharded between threads,
 * tbb::concurrent_queue as a channel
 
 ## mtdb2
-as like as mtdb, but lock-free mpmc_bounded_queue is used as a channel
+as like as mtdb, but lock-free mpmc_bounded_queue is used as a channel (https://groups.google.com/forum/#!topic/lock-free/-bqYlfbQmH0)
