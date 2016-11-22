@@ -5,13 +5,11 @@
 
 const int SIZE = 1000000;
 
-typedef tbb::concurrent_hash_map<int, int> map_t;
-
 int main(int argc, char *argv[])
 {
    const int thcount = (argc > 1 && atoi(argv[1]) > 0) ? atoi(argv[1]) : 1;
    //
-   map_t map;
+   tbb::concurrent_hash_map<int,int> map;
    map.rehash(2*SIZE);
    //
    std::future<long long> fu[thcount];
@@ -23,7 +21,7 @@ int main(int argc, char *argv[])
          for (int i = kk; i < SIZE; i += thcount)
          {
             // c += m[i*i] += i;
-            map_t::accessor a;
+            tbb::concurrent_hash_map<int,int>::accessor a;
             map.insert(a, i*i);
             c += a->second += i;
          }
@@ -36,4 +34,5 @@ int main(int argc, char *argv[])
       c += fu[k].get();
    //
    std::cout << c << std::endl;
+   return 0;
 }

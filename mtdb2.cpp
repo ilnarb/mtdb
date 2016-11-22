@@ -6,37 +6,34 @@
 
 const int SIZE = 1000000;
 
-inline int shard(int i, int thcount)
+struct shard_t
 {
-   return ((unsigned)i*(unsigned)i) % thcount;
-//   return ((unsigned)i) % thcount;
-}
-
-typedef std::unordered_map<int,int> map_t;
-typedef mpmc_bounded_queue<int> queue_t;
+   std::unordered_map<int,int> map;
+   mpmc_bounded_queue<int> queue;
+   std::future<long long> fu;
+   char pad[64];
+};
 
 int main(int argc, char *argv[])
 {
    const int thcount = (argc > 1 && atoi(argv[1]) > 0) ? atoi(argv[1]) : 1;
    // assume data sharded by %thcount between threads
-   map_t maps[thcount];
-   queue_t queues[thcount];
-   std::future<long long> fu[thcount];
+   shard_t shards[thcount];
    for (int k = 0; k < thcount; k++)
    {
-      maps[k].reserve(2*SIZE);
-      fu[k] = std::async(std::launch::async, [&](int kk)-> long long
+      auto &s = shards[k];
+      s.map.reserve(2*SIZE/thcount);
+      s.fu = std::async(std::launch::async, [&](int kk)-> long long
       {
-         auto &m = maps[kk];
-         auto &queue = queues[kk];
+         auto &s = shards[kk];
          long long c = 0;
          int i = -1;
          do
          {
-            if (queue.try_pop(i))
+            if (s.queue.try_pop(i))
             {
                if (i < 0) break;
-               c += m[i*i] += i;
+               c += s.map[i*i] += i;
             }
          }
          while(true);
@@ -45,14 +42,15 @@ int main(int argc, char *argv[])
    }
    // emulate requests
    for (int i = 0; i < SIZE; i++)
-      queues[shard(i, thcount)].push(i);
+      shards[unsigned(i*i) % thcount].queue.push(i);
    // done
-   for (int k=0; k<thcount; k++)
-      queues[k].push(-1);
+   for (auto &s : shards)
+      s.queue.push(-1);
    // merge result
    long long c = 0;
-   for (int k = 0; k < thcount; k++)
-      c += fu[k].get();
+   for (auto &s : shards)
+      c += s.fu.get();
    //
    std::cout << c << std::endl;
+   return 0;
 }

@@ -6,13 +6,11 @@
 
 const int SIZE = 1000000;
 
-typedef std::unordered_map<int, int> map_t;
-
 int main(int argc, char *argv[])
 {
    const int thcount = (argc > 1 && atoi(argv[1]) > 0) ? atoi(argv[1]) : 1;
    //
-   map_t map;
+   std::unordered_map<int,int> map;
    map.reserve(2*SIZE);
    //
    std::mutex mutex;
@@ -36,4 +34,5 @@ int main(int argc, char *argv[])
       c += fu[k].get();
    //
    std::cout << c << std::endl;
+   return 0;
 }

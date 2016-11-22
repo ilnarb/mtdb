@@ -3,11 +3,9 @@
 
 const int SIZE = 1000000;
 
-typedef tbb::concurrent_unordered_map<int, int> map_t;
-
 int main()
 {
-   map_t map;
+   tbb::concurrent_unordered_map<int,int> map;
    map.rehash(2*SIZE);
    //
    long long c = 0;
@@ -15,4 +13,5 @@ int main()
       c += map[i*i] += i;
    //
    std::cout << c << std::endl;
+   return 0;
 }
