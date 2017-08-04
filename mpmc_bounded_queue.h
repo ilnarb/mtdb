@@ -1,3 +1,12 @@
+/*  Multi-producer/multi-consumer bounded queue
+ *  2010, Dmitry Vyukov
+ *  Distributed under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation,
+ *  either version 3 of the License,
+ *  or (at your option) any later version.
+ *  See: http://www.gnu.org/licenses
+ */
+
 #include <stddef.h>
 #include <assert.h>
 #include <atomic>
