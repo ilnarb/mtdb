@@ -1,4 +1,4 @@
-# Bench MT maps and MT DB concept
+# Bench concurrency maps and multithreaded DB concept
 
 ## bench1
 initial single thread std::unordered_map without locks
